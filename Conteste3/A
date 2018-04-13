@@ -1,0 +1,35 @@
+#include <stdio.h>
+int main(){
+    int i, j, k, ks, count = 0, aux;
+    int x[1001];
+    
+    while(scanf("%d", &k) != 0){
+        ks = k;
+        
+        for(i = 0 ; i < k ; i++){
+            scanf("%d", &x[i]);
+        }
+        
+        for(i = 0 ; i < k ; i++){
+            for(j = i+1;j <= k;j++){
+                if(x[j] < x[i]){
+                    aux = x[i];                      //Ordenar os valores
+                    x[i] = x[j];
+                    x[j] = aux;
+                }
+            }
+        }
+        while(ks > 0){
+            for(i = 0, count = 0 ; i < k ; i++){
+                if(i != ((ks-1) - count)){                                  //printa
+                    printf("%d ", x[i]);
+                }
+            }
+            printf("\n");
+            ks--;
+            count++;
+        }
+    }
+
+    return 0;
+}
