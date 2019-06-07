@@ -1,0 +1,5 @@
+Seja a1, a2, ..., an uma sequência de números. Dizemos que c1a1 + c2a2 + ... + cnan é uma combinação linear inteira de a1, a2, ..., an se 
+c1, c2, ..., cn são números naturais. Escreva uma função baseada em enumeração implícita que receba uma sequência de números e um valor M 
+e devolva verdadeiro se existe uma combinação linear inteira da sequência cujo valor seja exatamente M; falso, caso contrário. Por exemplo,
+para a sequência 5, 8, 3 e M = 11, a função deve devolver verdadeiro, pois a 1.5 + 0.8 + 2.3 tem valor 11. Para M = 7, a função deve 
+devolver falso. (sugestão: adapte o algoritmo de branch-and-bound para o problema da mochila zero-um).
