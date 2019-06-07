@@ -1,0 +1,38 @@
+Algoritmo4_EI
+Entrada: C(Capacidade), X[Vetor com os números presentes], K[Vetor multiplicativo de cada item em X].
+Saída: Verdadeiro caso existe alguma combinação do somatório de X[i] * K[i] que seja igual a capacidade e falso caso não exista.
+OBS1: Os valores de K pertencem aos números reais.
+OBS2: O código não apresenta a ordenação de X, assumimos que ele esteja ordenado em ordem decrescente.
+OBS3: Supomos que o vetor K esteja zerado em todas as suas posições.
+
+Dados:
+i = 0;
+soma(Somatório de i até n de X[i] * K[i]) 
+n(número de itens no vetor X)
+
+Enquanto soma != C faça
+	Se ou C == 0
+		Devolva verdadeiro e pare
+
+	Enquanto soma + X[i] <= C faça
+		K[i]++
+		soma = soma + X[i]	
+		Se soma == C
+			Devolva verdadeiro e pare
+
+	Se soma + X[i + 1] > Limite
+		K[i]--
+		soma = soma - C[i]
+
+	Se i == n
+		aux = 1
+		Enquanto K[i - aux] == 0 faça
+			aux++
+			Se i - aux < 0
+				Devolva falso e pare
+
+		K[i - aux]--
+		soma = soma - X[i - aux]
+		i = i - aux
+
+	i++
