@@ -71,7 +71,7 @@ void verificaCriterios(double **M, int n) {
                 somaCol += abs(M[j][i]);
             }
         }
-        //printf("diag=%lf\nsomaLin=%lf\nsomaCol=%lf\n", diag, somaLin, somaCol);
+
         if((somaLin / diag) >= 1){
             flagLin = 1;
         }
@@ -85,18 +85,17 @@ void verificaCriterios(double **M, int n) {
     }
 
     if(flagCol){
-        printf("O criterio das linhas não foi sastisfeito \n");
+        printf("O criterio das linhas não foi sastisfeito \n\n");
     }
     if(flagCol){
-        printf("O criterio das colunas não foi sastisfeito\n");
+        printf("O criterio das colunas não foi sastisfeito\n\n");
     }
     if(flagLin == 0 && flagCol == 0){
-        printf("Nao houve criterios insastisfeitos\n");
+        printf("Nao houve criterios insastisfeitos\n\n");
     }
 
     flagLin = 0;
     flagCol = 0;
-    //a               /home/paulo/Desktop/SL
 
 } /* Fim leMatriz */
 
@@ -213,21 +212,56 @@ void converte() {
 
 /* Opção S */
 
+double novoResultado(double **M, double x[1000], int j, int i, int n){
+    int a, k;
+    double soma = 0;
+
+    int linha = j % n;
+    for (a = n-1, k = 1; a <= 0; a--){
+        if (i != linha){
+            soma = soma + (M[linha][a] * -x[i-k]);
+            k++;
+        }
+    }
+
+    soma = (soma + M[linha][n]) / M[linha][linha];
+    return soma;
+}
+
 void aplicaGaussSeidel(double **M, int n) {
     // Recebe M, a matriz aumentada de um SL com n variáveis
     // e n equações e transforma em uma matriz aumentada de
     // um SL diagonal equivalente.
-    int i, j, k;
-
-    double x[1000], x_aux[1000];
-    for (i = 0; i < 1000; i++){
-        x[i] = 0;
-        x_aux[i] = 0;
+    // /home/paulo/Desktop/SL
+    int i, j, k, flag = 1;
+    double x[100000] = {0};
+    double aux;
+    int a;
+    i = n;
+    int iteracoes = 1000;   
+    while(iteracoes--){
+        for (j = 0; j < n; j++){
+            x[i] = novoResultado(M, x, j, i, n);
+            printf("%lf\n", x[i]);
+            i++;
+        }
+        for (k = i-n; k < n; k++){
+            flag = 1;
+            aux = x[k];
+            if ((aux - ((int)aux)) > 0.000000009){
+                flag = 0;
+            }
+        }
+        if (!flag){
+            iteracoes = 0;
+        }
+        scanf("%d", &a);
     }
 
-    while(condicao1() && condicao2())
-        for (i = 0; i <)
-            x_aux
+    j = j - n;
+    for (i = 0; i < n; i++){
+        printf("x%d = %lf\n", i+1, x[j]);
+    }
     
 } /* Fim Gauss-Seidel */
 
@@ -257,7 +291,6 @@ void resolveSL() {
             desalocaMatriz(M, n);
         if (x != NULL)
             free(x);
-        if (ordemRaizes != NULL)
         return;
     }
     leMatriz(M, n, f);
@@ -508,5 +541,3 @@ int main() {
     } while (trataEntrada());
     return 0;
 } /* Fim main */
-
-//a/home/paulo/Desktop/SL
