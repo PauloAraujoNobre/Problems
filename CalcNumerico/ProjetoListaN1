@@ -49,17 +49,11 @@ void leMatriz(double **M, int n, FILE *f) {
     }
 } /* Fim leMatriz */
 
-double mod(double x){
-    if (x < 0){
-        x = -x;
-    }
-    return x;
-}
 
-void verificaCriterios(double **M, int n) {
+int verificaCriterios(double **M, int n) {
     // Lê valores para uma matriz de double alocada
     // dinamicamente com n linhas e n+1 colunas.
-    int i, j, flagLin = 0, flagCol = 0;
+    int i, j, flagLin = 0, flagCol = 0, tipo = 0;
     double somaLin = 0, somaCol = 0, diag = 0;
     
     for (i = 0; i < n; i++){
@@ -72,11 +66,11 @@ void verificaCriterios(double **M, int n) {
             }
         }
 
-        if((somaLin / diag) >= 1){
+        if((somaLin / diag) > 1){
             flagLin = 1;
         }
 
-        if((somaCol / diag) >= 1){
+        if((somaCol / diag) > 1){
             flagCol = 1;
         }
 
@@ -84,20 +78,26 @@ void verificaCriterios(double **M, int n) {
         somaCol = 0;
     }
 
-    if(flagCol){
-        printf("O criterio das linhas não foi sastisfeito \n\n");
-    }
-    if(flagCol){
-        printf("O criterio das colunas não foi sastisfeito\n\n");
-    }
     if(flagLin == 0 && flagCol == 0){
         printf("Nao houve criterios insastisfeitos\n\n");
+        return tipo;
+    }else{
+        if(flagLin){
+            printf("O criterio das linhas não foi sastisfeito\n");
+            tipo++;
+        }
+        if(flagCol){
+            printf("O criterio das colunas não foi sastisfeito\n\n");
+            tipo++;
+        }
+        if(tipo == 2){
+            printf("Os criterios n foram sastisfeitos, logo Gauss-Seidel nao ira convergir\n");
+        }
+        return tipo;
     }
+}
 
-    flagLin = 0;
-    flagCol = 0;
-
-} /* Fim leMatriz */
+ /* Fim leMatriz */
 
 void exibeMatriz(double **M, int n) {
     // Imprime o conteúdo de uma matriz de double alocada
@@ -216,15 +216,14 @@ double novoResultado(double **M, double x[1000], int j, int i, int n){
     int a, k;
     double soma = 0;
 
-    int linha = j % n;
-    for (a = n-1, k = 1; a <= 0; a--){
-        if (i != linha){
-            soma = soma + (M[linha][a] * -x[i-k]);
+    for (a = n-1, k = 1; a >= 0; a--){
+        if (a != j){
+            soma = soma + (M[j][(i-k)%n] * -x[i-k]);
             k++;
         }
     }
 
-    soma = (soma + M[linha][n]) / M[linha][linha];
+    soma = (soma + M[j][n]) / M[j][j];
     return soma;
 }
 
@@ -233,7 +232,7 @@ void aplicaGaussSeidel(double **M, int n) {
     // e n equações e transforma em uma matriz aumentada de
     // um SL diagonal equivalente.
     // /home/paulo/Desktop/SL
-    int i, j, k, flag = 1;
+    int i, j, k, l, flag = 1;
     double x[100000] = {0};
     double aux;
     int a;
@@ -242,25 +241,24 @@ void aplicaGaussSeidel(double **M, int n) {
     while(iteracoes--){
         for (j = 0; j < n; j++){
             x[i] = novoResultado(M, x, j, i, n);
-            printf("%lf\n", x[i]);
             i++;
         }
         for (k = i-n; k < n; k++){
-            flag = 1;
+            flag = 0;
             aux = x[k];
             if ((aux - ((int)aux)) > 0.000000009){
-                flag = 0;
+                flag = 1;
             }
         }
         if (!flag){
             iteracoes = 0;
         }
-        scanf("%d", &a);
     }
 
-    j = j - n;
-    for (i = 0; i < n; i++){
-        printf("x%d = %lf\n", i+1, x[j]);
+    j = i - n;
+    printf("Atraves do metodo de Gauss-Seidel:\n");
+    for (l = 0; l < n; l++, j++){
+        printf("x%d = %lf\n", l+1, x[j]);
     }
     
 } /* Fim Gauss-Seidel */
@@ -272,7 +270,7 @@ void resolveSL() {
     char nome[100];
     double **M, *x;
     int n, i, j, tipo;
-    int *ordemRaizes;
+    int criterio;
     printf("\nDigite o nome do arquivo de texto contendo o sistema linear: ");
     scanf("%s", nome);
     getchar();
@@ -294,9 +292,11 @@ void resolveSL() {
         return;
     }
     leMatriz(M, n, f);
-    verificaCriterios(M, n);
+    criterio = verificaCriterios(M, n);
     fclose(f);
-    aplicaGaussSeidel(M, n);
+    if (criterio != 2){
+        aplicaGaussSeidel(M, n);
+    }
     exibeAviso();
     desalocaMatriz(M, n);
     free(x);
